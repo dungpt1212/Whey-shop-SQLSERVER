@@ -6,16 +6,16 @@
       <table class="table table-bordered " >
         <thead style="text-align: center;">
           <tr class="danger">
-            <th>Ma HĐ</th>
-            <th>Nguoi dat</th>
-            <th>Nguoi nhan</th>
-            <th>SĐT</th>
-            <th>Dia chi <br> Nhan hang</th>
-            <th>Tong tien</th>
-            <th>Hinh thuc</th>
+            <th>Id</th>
+            <th>NameCustomer</th>
+            <th>NameReciever</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Total</th>
+            <th>Payment</th>
             <th>Time</th>
-            <th>Trag thai</th>
-            <th>Chuc nang</th>
+            <th>Status</th>
+            <th>#######</th>
           </tr>
         </thead>
         <tbody id="myTable">

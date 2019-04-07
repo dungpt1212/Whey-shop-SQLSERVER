@@ -1,104 +1,109 @@
 <?php 
-	include("../../Lib/connection.php");
-	if(isset($_POST["year"]) && isset($_POST["month"])){
-		$year = $_POST["year"];
-		$month = $_POST["month"];
-		$sql = "SELECT tbl_product_detail.IdProduct,tbl_product_detail.NameProduct,tbl_product_detail.AmountOriginal, tbl_product_detail.NewPrice, tbl_product_detail.OriginalPrice, SUM(tbl_bill_detail.Number) as soluongban, COUNT(tbl_bill_detail.IdProduct) as songuoimua FROM tbl_bill INNER JOIN tbl_bill_detail ON tbl_bill.IdBill = tbl_bill_detail.IdBill INNER JOIN tbl_product_detail on tbl_bill_detail.IdProduct = tbl_product_detail.IdProduct WHERE YEAR(Time) = $year AND MONTH(Time) = $month AND tbl_bill.Status = 'Hoàn tất' GROUP BY tbl_product_detail.IdProduct  ORDER BY soluongban DESC";
-		$query = mysqli_query($conn, $sql);
-		if(mysqli_num_rows($query) > 0){
-	
+include("../../Lib/connection.php");
+if(isset($_POST["year"]) && isset($_POST["month"])){
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$sql = "SELECT DISTINCT tbl_product_detail.IdProduct,tbl_product_detail.NameProduct,tbl_bill_detail.Number,tbl_product_detail.NewPrice,tbl_product_detail.OriginalPrice FROM tbl_bill INNER JOIN tbl_bill_detail on tbl_bill.IdBill = tbl_bill_detail.IdBill INNER JOIN tbl_product_detail ON tbl_bill_detail.IdProduct = tbl_product_detail.IdProduct WHERE YEAR(Time) = $year AND MONTH(Time) = $month ORDER BY Number DESC";
+	$params = array(); 
+	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
+	$query = sqlsrv_query($conn_sqlsrv, $sql , $params, $options) or die(print_r(sqlsrv_errors(), true));
+	if(sqlsrv_num_rows($query) != false){
+		?>
+		<p>Thống kê doanh thu tháng <?php echo($month) ?> năm <?php echo($year) ?></p>
+		<table class="table table-bordered">
+			<thead>
+				<tr class="danger">
+					<th>STT</th>
+					<th>TenSP</th>
+					<th>So_luong_ban</th>
+					<th>Don_gia</th>
+					<th>So_hoa_don</th>
+					<th>Tien_thu_ve</th>
+					<th>Tien_lai</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php 
+				$stt = 0;
+				$soluongban = 0;
+				$soluongnguoimua = 0;
+				$tongtienthuve = 0;
+				$tongtienlai=0;
+				while($row = sqlsrv_fetch_array($query)){ 
+					$stt++;
+					$idproduct = $row["IdProduct"];
+					?>
+					<tr>
+						<td><?php echo($stt) ?></td>
+						<td><?php echo($row["NameProduct"]) ?></td>
+						<td>
+							<?php 
+							$sql1 = "SELECT SUM(Number) as 'soluongban' FROM tbl_bill_detail WHERE IdProduct = '$idproduct'";
+							$query1 = sqlsrv_query($conn_sqlsrv, $sql1) or die(print_r(sqlsrv_errors(), true));
+							$row1 = sqlsrv_fetch_array($query1);
+							echo($row1["soluongban"]);
+							$soluongban += $row1["soluongban"];
+							?>	
+						</td>
+						<td><?php echo number_format($row['NewPrice']).'đ'; ?></td>
+						<td>
+							<?php 
+							$sql2 = "SELECT COUNT(IdProduct) as 'songuoimua' FROM tbl_bill_detail WHERE IdProduct = '$idproduct'";
+							$query2 = sqlsrv_query($conn_sqlsrv, $sql2) or die(print_r(sqlsrv_errors(), true));
+							$row2 = sqlsrv_fetch_array($query2);
+							echo($row2["songuoimua"]);
+							$soluongnguoimua += $row2["songuoimua"];
+							?>
+						</td>
+						<td>
+							<?php 
+							echo(number_format($row["NewPrice"]*$row1["soluongban"])."đ");
+							$tongtienthuve += $row["NewPrice"]*$row1["soluongban"];
+							?>
+						</td>
+						<td>
+							<?php 
+							echo(number_format(($row["NewPrice"]-$row["OriginalPrice"])*$row1["soluongban"])."đ");
+							$tongtienlai += ($row["NewPrice"]-$row["OriginalPrice"])*$row1["soluongban"];
+							?>
+						</td>
+					</tr>
+				<?php } ?>
+			</tbody>
+		</table> 
 
 
+		<div class="container thongketq">
+			<div class="row">
+				<h4>Tổng quan</h4>
+				<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+					<table class="table table-bordered">
+						<tbody>
+							<tr>
+								<th>Tổng sản phẩm bán ra:</th>
+								<td><?php echo($soluongban); ?></td>
+							</tr>
+							<tr>
+								<th>Tổng số hóa đơn: </th>
+								<td><?php echo($soluongnguoimua); ?></td>
+							</tr>
+							<tr>
+								<th>Tổng tiền thu về:</th>
+								<td><?php echo(number_format($tongtienthuve)."đ"); ?></td>
+							</tr>
+							<tr>
+								<th>Tổng tiền lãi:</th>
+								<td><?php echo(number_format($tongtienlai)."đ"); ?></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>       
 
 
- ?>
- <p>Thống kê doanh thu tháng <?php echo($month) ?> năm <?php echo($year) ?></p>
-        <table class="table table-bordered">
-	    <thead>
-	      <tr class="danger">
-	        <th>STT</th>
-	        <th>TenSP</th>
-	        <th>Số lượng bán</th>
-	        <th>Số lượng người mua</th>
-	        <th>Tiền thu về</th>
-	        <th>Tiền lãi</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	    	<?php 
-	    		$stt = 0;
-	    		$soluongban = 0;
-	    		$soluongnguoimua = 0;
-	    		$tongtienthuve = 0;
-	    		$tongtienlai=0;
-	    		while($row = mysqli_fetch_array($query)){ 
-	    			$stt++;
-	    			$idproduct = $row["IdProduct"];
-	    	?>
-	      <tr>
-	        <td><?php echo($stt) ?></td>
-	        <td><?php echo($row["NameProduct"]) ?></td>
-	        <td>
-	        	<?php 
-	        		echo($row["soluongban"]);
-	        		$soluongban += $row["soluongban"];
-	        	 ?>	
-	        </td>
-	        <td>
-	        	<?php 
-	        		echo($row["songuoimua"]);
-	        		$soluongnguoimua += $row["songuoimua"];
-	        	 ?>
-	       	</td>
-	        <td>
-	        	<?php 
-	        		echo(number_format($row["NewPrice"]*$row["soluongban"])."đ");
-	        		$tongtienthuve += $row["NewPrice"]*$row["soluongban"];
-	        	?>
-	        </td>
-	        <td>
-	        	<?php 
-	        		echo(number_format(($row["NewPrice"]-$row["OriginalPrice"])*$row["soluongban"])."đ");
-	        		$tongtienlai += ($row["NewPrice"]-$row["OriginalPrice"])*$row["soluongban"];
-	        	?>
-	        </td>
-	      </tr>
-	     	<?php } ?>
-	    </tbody>
-  		</table> 
-
-
- 	<div class="container thongketq">
- 		<div class="row">
- 			<h4>Tổng quan</h4>
- 			<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
- 				<table class="table table-bordered">
-			    <tbody>
-			      <tr>
-			        <th>Tổng sản phẩm bán ra:</th>
-			        <td><?php echo($soluongban); ?></td>
-			      </tr>
-			      <tr>
-			        <th>Tổng số khách hàng: </th>
-			        <td><?php echo($soluongnguoimua); ?></td>
-			      </tr>
-			      <tr>
-			        <th>Tổng tiền thu về:</th>
-			        <td><?php echo(number_format($tongtienthuve)."đ"); ?></td>
-			      </tr>
-			       <tr>
-			        <th>Tổng tiền lãi:</th>
-			        <td><?php echo(number_format($tongtienlai)."đ"); ?></td>
-			      </tr>
-			    </tbody>
-				</table>
- 			</div>
- 		</div>
- 	</div>       
-
-
- <?php }else{ ?>
-	<h3>Chưa có số liệu thống kê cho tháng <?php echo($month) ?> năm <?php echo($year) ?></h3>
- <?php }
- 	}
- ?>
+	<?php }else{ ?>
+		<h3>Chưa có số liệu thống kê cho tháng <?php echo($month) ?> năm <?php echo($year) ?></h3>
+	<?php }
+}
+?>

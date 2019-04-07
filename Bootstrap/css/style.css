@@ -5,6 +5,17 @@
     font-size: 16px;
 }
 
+.ul_bottom_first li {
+    margin-bottom: 3%;
+    margin-left: 3%;
+    float: left;
+}
+
+ul.ul_bottom_first {
+    margin: 5%;
+    list-style-type: none;
+}
+
 .span_detail i {
     text-decoration: line-through;
     font-size: 20px;
@@ -834,7 +845,7 @@ div#menu-right img {
 
 .ul_main_tintuc h3 {
     top: 50px;
-    position: sticky;
+    /* position: sticky; */
     margin-left: -53px;
     font-family: lato-Bold;
     color: #1a8837;
@@ -1416,11 +1427,11 @@ input.soluong {
 
 .dongia p:nth-child(1) {}
 
-p.hÃƒâ€ Ã‚Â°Ãƒâ€ Ã‚Â¡ngvi {
+p.hÃƒÆ’Ã¢â‚¬Â Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â Ãƒâ€šÃ‚Â¡ngvi {
     font-size: 70%;
 }
 
-p.hÃƒâ€ Ã‚Â°Ãƒâ€ Ã‚Â¡ngvi span {
+p.hÃƒÆ’Ã¢â‚¬Â Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â Ãƒâ€šÃ‚Â¡ngvi span {
     font-size: 106%;
 }
 

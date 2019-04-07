@@ -5,18 +5,8 @@
           <li><img src="upload/thuonghieu_2.png" width="200px" height="80px"></li>
           <li><img src="upload/thuonghieu_3.png" width="200px" height="80px"></li>
           <li><img src="upload/thuonghieu_4.png" width="200px" height="80px"></li>
-          <li><img src="upload/thuonghieu_5.png" width="200px" height="80px"></li>
+  
           
-        </ul >
-      
-         <ul class="ul_bottom_first"stt="2" style="display: none;">
-          <li><img src="upload/thuonghieu_4.png" width="200px" height="80px"></li>
-          <li><img src="upload/thuonghieu_5.png" width="200px" height="80px"></li>
-          <li><img src="upload/thuonghieu_6.png" width="200px" height="80px"></li>
-          <li><img src="upload/thuonghieu_7.png" width="200px" height="80px"></li>
-          <li><img src="upload/thuonghieu_8.png" width="200px" height="80px"></li>
-          
-        </ul>
       </div>
       
 

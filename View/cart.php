@@ -164,17 +164,24 @@ if(isset($_SESSION["cart"])&&!empty($_SESSION["cart"])){
 
 <div class="confirm_pay"> <!-- form xác nhận địa chỉ thanh toán start -->
   <div class="container-fluid">
-
+<?php
+if(isset($_SESSION["user"])){
+     $username = $_SESSION["user"];
+     $sql="SELECT * FROM tbl_customer where Username = '$username'";
+     $query= sqlsrv_query($conn_sqlsrv, $sql) or die(print_r(sqlsrv_errors(), true));
+     $row = sqlsrv_fetch_array($query);
+}
+?>
     <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 left">
       <h3><span class="fa fa-truck" style="margin-right: 5px; transform: rotateY(180deg);"></span>Thông tin giao hàng</h3>
       <form action="View/process_pay.php" method="post" >
         <div class="form-group">
           <label>Tên(*):</label>
-          <input type="text" class="form-control" name="txt_name1" id="txt_name1" placeholder="Họ tên...">
+          <input type="text" class="form-control" name="txt_name1" id="txt_name1" value="<?php echo($row['NameCustomer']) ?>" placeholder="Họ tên...">
         </div>
         <div class="form-group">
           <label for="pwd">Số điện thoại(*):</label>
-          <input type="number" class="form-control" name="txt_phone1" placeholder="Xin vui lòng nhập số điện thoại...">
+          <input type="number" class="form-control" name="txt_phone1" value="<?php echo '0'.$row['Phone'] ?>" placeholder="Xin vui lòng nhập số điện thoại...">
         </div>
         <div class="form-group">
           <label >Hình thức thanh toán</label>
@@ -190,7 +197,7 @@ if(isset($_SESSION["cart"])&&!empty($_SESSION["cart"])){
       <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 right">
         <div class="form-group">
           <label for="email">Địa chỉ nhận hàng(*):</label>
-          <input type="text" class="form-control" name="txt_addr1" placeholder="Vui lòng nhập địa chỉ của bạn(tên đường, số nhà)...">
+          <input type="text" class="form-control" name="txt_addr1" value="<?php echo($row['Address']) ?>" placeholder="Vui lòng nhập địa chỉ của bạn(tên đường, số nhà)...">
         </div>
         <label for="sel1">Tỉnh/thành phố(*):</label>
         <select class="form-control tinhthanhpho" name="sl_tinhthanhpho">
@@ -229,7 +236,7 @@ if(isset($_SESSION["cart"])&&!empty($_SESSION["cart"])){
      $sql="SELECT * FROM tbl_bill where IdCustomer = '$idcustomer' order by IdBill DESC";
     $params = array();
     $options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
-    $query = sqlsrv_query($conn_sqlsrv, $sql);
+    $query = sqlsrv_query($conn_sqlsrv, $sql , $params, $options);
      if(sqlsrv_num_rows($query) != false ){
       ?>
       <div class="row">
@@ -238,14 +245,14 @@ if(isset($_SESSION["cart"])&&!empty($_SESSION["cart"])){
           <table class="table table-bordered " >
             <thead style="text-align: center;">
               <tr class="danger">
-                <th>Thời gian đặt hàng</th>
-                <th>Tổng tiền</th>
-                <th>Tên người đặt</th>
-                <th>Tên người nhận</th>
-                <th>Sdt người nhận</th>
-                <th>Địa chỉ <br> nhận hàng</th>
-                <th>Hình thức thanh toán</th>
-                <th>Trạng thái</th>
+                <th>Time</th>
+                <th>Total</th>
+                <th>NameCustomer</th>
+                <th>NameReceiver</th>
+                <th>Phone</th>
+                <th>Add</th>
+                <th>Payment</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -260,7 +267,7 @@ if(isset($_SESSION["cart"])&&!empty($_SESSION["cart"])){
                 $idcustomer = $row["IdCustomer"];
                 ?>
                 <tr>
-                  <td><?php echo($row["Time"]) ?></td>
+                  <td></td>
                   <td><?php echo(number_format($row["Total"])."VNĐ") ?></td>
                   <td><?php 
                   $sql1   ="SELECT * FROM tbl_customer where IdCustomer = '$idcustomer'";

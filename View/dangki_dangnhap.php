@@ -39,7 +39,7 @@
         button: "OK",
       });</script>');
     }else{
-      $sql="INSERT INTO tbl_customer (Username, Pass, NameCustomer, Email, Address, Phone) VALUES ('$user', N'$pass', N'$name', '$email', N'$addr', '$phone');";
+      $sql="INSERT INTO tbl_customer (Username, Pass, NameCustomer, Email, Address, Phone, IdBranch) VALUES ('$user', N'$pass', N'$name', '$email', N'$addr', '$phone', 1);";
       $query = sqlsrv_query($conn_sqlsrv, $sql);
       echo('<script>swal({
         title: "Đăng ký thành công",

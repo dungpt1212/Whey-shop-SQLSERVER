@@ -48,7 +48,7 @@
  		
  		$time = date('Y-m-d H:i:s');
  		/*INSERT dữ liệu vào bảng hóa đơn*/
- 		$sql="INSERT INTO tbl_bill(IdCustomer, NameRecevier, PhoneReceiver, AddressRecevier, Total, Pay, Time, Status) VALUES ('$idcustomer',N'$name','$phone',N'$AddressRecevier','$total_money',N'$hinhthucthanhtoan','$time',N'$trangthai')";
+ 		$sql="INSERT INTO tbl_bill(IdCustomer, NameRecevier, PhoneReceiver, AddressRecevier, Total, Pay, Time, Status, IdBranch) VALUES ('$idcustomer',N'$name','$phone',N'$AddressRecevier','$total_money',N'$hinhthucthanhtoan','$time',N'$trangthai', '1')";
 		$query= sqlsrv_query($conn_sqlsrv, $sql) or die(print_r(sqlsrv_errors(), true));
 
 
