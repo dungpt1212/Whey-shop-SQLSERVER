@@ -1,9 +1,18 @@
 <?php 
+session_start();
 include("../../Lib/connection.php");
-if(isset($_POST["year"]) && isset($_POST["month"])){
+if(isset($_POST["year"]) && isset($_POST["month"]) && isset($_SESSION["admin"])){
 	$year = $_POST["year"];
 	$month = $_POST["month"];
-	$sql = "SELECT DISTINCT tbl_product_detail.IdProduct,tbl_product_detail.NameProduct,tbl_bill_detail.Number,tbl_product_detail.NewPrice,tbl_product_detail.OriginalPrice FROM tbl_bill INNER JOIN tbl_bill_detail on tbl_bill.IdBill = tbl_bill_detail.IdBill INNER JOIN tbl_product_detail ON tbl_bill_detail.IdProduct = tbl_product_detail.IdProduct WHERE YEAR(Time) = $year AND MONTH(Time) = $month ORDER BY Number DESC";
+	
+	$username = $_SESSION["admin"];
+	$sql = "SELECT * from tbl_admin WHERE UserName = '$username'";
+	$query = sqlsrv_query($conn_sqlsrv, $sql) or die(print_r(sqlsrv_errors(), true));
+	$row = sqlsrv_fetch_array($query);
+	$idbranch = $row['IdBranch'];
+
+	/*$sql = "SELECT DISTINCT tbl_bill_detail.IdProduct, tbl_product_detail.NameProduct,tbl_bill_detail.Number,tbl_product_detail.NewPrice,tbl_product_detail.OriginalPrice FROM tbl_bill INNER JOIN tbl_bill_detail on tbl_bill.IdBill = tbl_bill_detail.IdBill INNER JOIN tbl_product_detail ON tbl_bill_detail.IdProduct = tbl_product_detail.IdProduct WHERE tbl_bill.IdBranch = '$idbranch' AND YEAR(Time) = $year AND MONTH(Time) = $month ORDER BY Number DESC";*/
+	$sql = "SELECT IdProduct FROM tbl_bill INNER JOIN tbl_bill_detail on tbl_bill.IdBill = tbl_bill_detail.IdBill WHERE tbl_bill.IdBranch = '$idbranch' AND YEAR(Time) = $year AND MONTH(Time) = $month GROUP BY IdProduct ";
 	$params = array(); 
 	$options =  array( "Scrollable" => SQLSRV_CURSOR_KEYSET );
 	$query = sqlsrv_query($conn_sqlsrv, $sql , $params, $options) or die(print_r(sqlsrv_errors(), true));
@@ -35,7 +44,14 @@ if(isset($_POST["year"]) && isset($_POST["month"])){
 					?>
 					<tr>
 						<td><?php echo($stt) ?></td>
-						<td><?php echo($row["NameProduct"]) ?></td>
+						<td>
+							<?php 
+							$sql0 = "SELECT * FROM tbl_product_detail WHERE IdProduct = '$idproduct'";
+							$query0 = sqlsrv_query($conn_sqlsrv, $sql0) or die(print_r(sqlsrv_errors(), true));
+							$row0 = sqlsrv_fetch_array($query0);
+							echo($row0["NameProduct"]) 
+							?>	
+						</td>
 						<td>
 							<?php 
 							$sql1 = "SELECT SUM(Number) as 'soluongban' FROM tbl_bill_detail WHERE IdProduct = '$idproduct'";
@@ -45,7 +61,12 @@ if(isset($_POST["year"]) && isset($_POST["month"])){
 							$soluongban += $row1["soluongban"];
 							?>	
 						</td>
-						<td><?php echo number_format($row['NewPrice']).'đ'; ?></td>
+						<td><?php 
+						$sql0 = "SELECT * FROM tbl_product_detail WHERE IdProduct = '$idproduct'";
+						$query0 = sqlsrv_query($conn_sqlsrv, $sql0) or die(print_r(sqlsrv_errors(), true));
+						$row0 = sqlsrv_fetch_array($query0);
+						echo number_format($row0['NewPrice']).'đ'; 
+						?></td>
 						<td>
 							<?php 
 							$sql2 = "SELECT COUNT(IdProduct) as 'songuoimua' FROM tbl_bill_detail WHERE IdProduct = '$idproduct'";
@@ -57,14 +78,14 @@ if(isset($_POST["year"]) && isset($_POST["month"])){
 						</td>
 						<td>
 							<?php 
-							echo(number_format($row["NewPrice"]*$row1["soluongban"])."đ");
-							$tongtienthuve += $row["NewPrice"]*$row1["soluongban"];
+							echo(number_format($row0["NewPrice"]*$row1["soluongban"])."đ");
+							$tongtienthuve += $row0["NewPrice"]*$row1["soluongban"];
 							?>
 						</td>
 						<td>
 							<?php 
-							echo(number_format(($row["NewPrice"]-$row["OriginalPrice"])*$row1["soluongban"])."đ");
-							$tongtienlai += ($row["NewPrice"]-$row["OriginalPrice"])*$row1["soluongban"];
+							echo(number_format(($row0["NewPrice"]-$row0["OriginalPrice"])*$row1["soluongban"])."đ");
+							$tongtienlai += ($row0["NewPrice"]-$row0["OriginalPrice"])*$row1["soluongban"];
 							?>
 						</td>
 					</tr>
@@ -85,7 +106,12 @@ if(isset($_POST["year"]) && isset($_POST["month"])){
 							</tr>
 							<tr>
 								<th>Tổng số hóa đơn: </th>
-								<td><?php echo($soluongnguoimua); ?></td>
+								<td><?php 
+								$sql0 = 'SELECT Count(*) as "tongsohoadon" FROM tbl_bill ';
+								$query0 = sqlsrv_query($conn_sqlsrv, $sql0) or die(print_r(sqlsrv_errors(), true));
+								$row0 = sqlsrv_fetch_array($query0);
+								echo($row0['tongsohoadon']); 
+								?></td>
 							</tr>
 							<tr>
 								<th>Tổng tiền thu về:</th>

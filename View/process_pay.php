@@ -62,7 +62,7 @@
 		if(isset($_SESSION["cart"])){
 			foreach ($_SESSION["cart"] as $key => $val) {
 				$number = $val["number"];
-				$sql="INSERT INTO tbl_bill_detail(IdBill, IdProduct, Number) VALUES ('$idbill','$key', '$number')";
+				$sql="INSERT INTO tbl_bill_detail(IdBill, IdProduct, Number, IdBranch) VALUES ('$idbill','$key', '$number', '1')";
 		        $query= sqlsrv_query($conn_sqlsrv, $sql) or die(print_r(sqlsrv_errors(), true));
 		        unset($_SESSION["cart"]);
 				header("location: ../index.php?page=cart&&alert=paysuccess");
