@@ -8,7 +8,7 @@
 
 	/*Ket noi voi sql server start*/
 	$serverName = "DESKTOP-NUVDSSC"; //serverName\instanceName
-	$connectionInfo = array( "Database"=>"webshop_dung", "UID"=>"sa", "PWD"=>"123456", "CharacterSet"=>"UTF-8");
+	$connectionInfo = array( "Database"=>"webshop_dung1", "UID"=>"sa", "PWD"=>"123456", "CharacterSet"=>"UTF-8");
 	$conn_sqlsrv = sqlsrv_connect( $serverName, $connectionInfo);
 	sqlsrv_query($conn_sqlsrv, "SET NAMES 'UTF8'");
 	ini_set('mssql.charset', 'UTF-8');

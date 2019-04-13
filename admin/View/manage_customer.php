@@ -18,8 +18,8 @@
                 <tbody id="myTable">
                     <?php 
                           $sql="SELECT * FROM tbl_customer";
-                          $query= mysqli_query($conn, $sql);
-                          while($row = mysqli_fetch_array($query)){
+                          $query= sqlsrv_query($conn_sqlsrv, $sql);
+                          while($row = sqlsrv_fetch_array($query)){
                     ?>
                   <tr>
                     <td><?php echo($row["IdCustomer"]) ?></td>
